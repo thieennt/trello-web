@@ -1,5 +1,6 @@
 import AppsIcon from '@mui/icons-material/Apps';
 import HelpOutlineIcon from '@mui/icons-material/HelpOutline';
+import LibraryAddIcon from '@mui/icons-material/LibraryAdd';
 import NotificationsNoneIcon from '@mui/icons-material/NotificationsNone';
 import Badge from '@mui/material/Badge';
 import Box from '@mui/material/Box';
@@ -19,7 +20,6 @@ import Workspaces from './Menus/Workspaces';
 const AppBar = () => {
   return (
     <Box
-      px={2}
       sx={{
         width: '100%',
         height: (theme) => theme.trello.appBarHeight,
@@ -27,6 +27,7 @@ const AppBar = () => {
         alignItems: 'center',
         justifyContent: 'space-between',
         gap: 2,
+        paddingX: 2,
         overflow: 'auto',
       }}
     >
@@ -55,7 +56,9 @@ const AppBar = () => {
           <Recent />
           <Started />
           <Templates />
-          <Button variant="outlined">Create</Button>
+          <Button variant="outlined" startIcon={<LibraryAddIcon />}>
+            Create
+          </Button>
         </Box>
       </Box>
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
