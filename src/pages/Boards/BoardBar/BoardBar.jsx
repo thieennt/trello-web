@@ -40,7 +40,6 @@ const BoardBar = () => {
         bgcolor: (theme) =>
           // theme.palette.mode === 'dark' ? '#2c3e50' : '#3742fa',
           theme.palette.mode === 'dark' ? '#34495e' : '#1976d2',
-        borderBottom: '1px solid #ccc',
       }}
     >
       <Box sx={{ display: 'flex', alignItems: 'center', gap: 2 }}>
