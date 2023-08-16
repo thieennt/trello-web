@@ -10,6 +10,7 @@ import Box from '@mui/material/Box';
 import Button from '@mui/material/Button';
 import Chip from '@mui/material/Chip';
 import Tooltip from '@mui/material/Tooltip';
+import { capitalizeFirstLetter } from '~/utils/formatters';
 
 const MENU_STYLES = {
   color: 'white',
@@ -25,7 +26,7 @@ const MENU_STYLES = {
   },
 };
 
-const BoardBar = () => {
+const BoardBar = ({ board }) => {
   return (
     <Box
       sx={{
@@ -46,13 +47,13 @@ const BoardBar = () => {
         <Chip
           sx={MENU_STYLES}
           icon={<SpaceDashboardIcon />}
-          label="MERN Stack Trello App"
+          label={board?.title}
           clickable
         />
         <Chip
           sx={MENU_STYLES}
           icon={<VpnLockIcon />}
-          label="Public/Private Workspace"
+          label={capitalizeFirstLetter(board?.name)}
           clickable
         />
         <Chip
