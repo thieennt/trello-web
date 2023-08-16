@@ -10,7 +10,7 @@ import CardMedia from '@mui/material/CardMedia';
 import Typography from '@mui/material/Typography';
 import Card from './Card/Card';
 
-const ListCards = () => {
+const ListCards = ({ cards }) => {
   return (
     <Box
       sx={{
@@ -33,45 +33,10 @@ const ListCards = () => {
         },
       }}
     >
-      <MuiCard
-        sx={{
-          cursor: 'pointer',
-          boxShadow: '0 1px 1px rgba(0, 0, 0, 0.2)',
-          overflow: 'unset',
-        }}
-      >
-        <CardMedia
-          sx={{ height: 140 }}
-          image="https://cdn4.buysellads.net/uu/1/127419/1670531697-AdobeTeams.jpg"
-          title="green iguana"
-        />
-        <CardContent sx={{ p: 1.5, '&:last-child': { p: 1.5 } }}>
-          <Typography>Trello App Using Material UI</Typography>
-        </CardContent>
-        <CardActions sx={{ p: '0 4px 8px 4px' }}>
-          <Button size="small" startIcon={<GroupIcon />}>
-            20
-          </Button>
-          <Button size="small" startIcon={<CommentIcon />}>
-            15
-          </Button>
-          <Button size="small" startIcon={<AttachmentIcon />}>
-            20
-          </Button>
-        </CardActions>
-      </MuiCard>
       {/* List Card */}
-      <Card />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
-      <Card temporaryHideMedia />
+      {cards.map((card) => (
+        <Card key={card._id} card={card} />
+      ))}
     </Box>
   );
 };
