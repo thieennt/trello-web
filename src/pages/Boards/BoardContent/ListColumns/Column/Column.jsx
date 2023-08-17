@@ -18,8 +18,21 @@ import Typography from '@mui/material/Typography';
 import { useState } from 'react';
 import ListCards from './ListCards/ListCards';
 import { mapOrder } from '~/utils/sort';
+import { useSortable } from '@dnd-kit/sortable';
+import { CSS } from '@dnd-kit/utilities';
 
 const Column = ({ column }) => {
+  const { attributes, listeners, setNodeRef, transform, transition } =
+    useSortable({ id: column._id, data: { ...column } });
+
+  const dndKitColumnStyle = {
+    // touchAction: 'none', // Dành cho sensor default dạng PointerSensor
+    // Nếu sử dụng CSS.Transform như docs sẽ bị lỗi kiểu stretch (bị biến đổi)
+    // Sử dụng CSS.Translate như bên dưới thì nó chỉ di chuyển chứ không bị biến đổi
+    transform: CSS.Translate.toString(transform),
+    transition,
+  };
+
   const [anchorEl, setAnchorEl] = useState(null);
   const open = Boolean(anchorEl);
 
@@ -34,6 +47,10 @@ const Column = ({ column }) => {
 
   return (
     <Box
+      ref={setNodeRef}
+      style={dndKitColumnStyle}
+      {...attributes}
+      {...listeners}
       sx={{
         minWidth: '300px',
         maxWidth: '300px',
