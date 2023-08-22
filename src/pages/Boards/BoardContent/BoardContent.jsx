@@ -7,6 +7,7 @@ import {
   TouchSensor,
   DragOverlay,
   defaultDropAnimationSideEffects,
+  closestCorners,
 } from '@dnd-kit/core';
 import { arrayMove } from '@dnd-kit/sortable';
 import Box from '@mui/material/Box';
@@ -151,9 +152,7 @@ const BoardContent = ({ board }) => {
   // Trigger khi kết thúc hành động kéo thả một phần tử
   const handleDragEnd = (event) => {
     // console.log('handleDragEnd', event);
-    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
-      console.log('handleDragEnd - Card');
-    }
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) return;
 
     const { active, over } = event;
 
@@ -195,6 +194,8 @@ const BoardContent = ({ board }) => {
   return (
     <DndContext
       sensors={sensors}
+      // Thuật toán phát hiện va chạm (nếu không có nó thì card với cover lớn sẽ không kéo qua Column được vì lúc này nó đang bị conflict giữa card và column)
+      collisionDetection={closestCorners}
       onDragStart={handleDragStart}
       onDragOver={handleDragOver}
       onDragEnd={handleDragEnd}
