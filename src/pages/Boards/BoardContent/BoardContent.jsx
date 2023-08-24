@@ -43,6 +43,7 @@ const BoardContent = ({ board }) => {
   const [activeDragItemId, setActiveDragItemId] = useState(null);
   const [activeDragItemType, setActiveDragItemType] = useState(null);
   const [activeDragItemData, setActiveDragItemData] = useState(null);
+  const [oldColumnDraggingCard, setOldColumnDraggingCard] = useState(null);
 
   useEffect(() => {
     setOrderedColumns(mapOrder(board?.columns, board?.columnOrderIds, '_id'));
@@ -64,6 +65,11 @@ const BoardContent = ({ board }) => {
         : ACTIVE_DRAG_ITEM_TYPE.COLUMN,
     );
     setActiveDragItemData(event?.active?.data?.current);
+
+    // Nếu là kéo card thì mới thực hiện hành động set giá trị oldColumn
+    if (event.active?.data?.current?.columnId) {
+      setOldColumnDraggingCard(findColumnByCardId(event?.active?.id));
+    }
   };
 
   // Trigger trong quá trình kéo một phần tử
@@ -152,31 +158,86 @@ const BoardContent = ({ board }) => {
   // Trigger khi kết thúc hành động kéo thả một phần tử
   const handleDragEnd = (event) => {
     // console.log('handleDragEnd', event);
-    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) return;
-
     const { active, over } = event;
 
     if (!active || !over) return;
 
-    if (active.id !== over.id) {
-      const oldIndex = orderedColumns.findIndex(
-        (column) => column._id === active.id,
-      );
+    // Xử lý kéo thả Card
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.CARD) {
+      const {
+        id: activeDraggingCardId,
+        data: { current: activeDraggingCardData },
+      } = active;
+      const { id: overCardId } = over;
 
-      const newIndex = orderedColumns.findIndex(
-        (column) => column._id === over.id,
-      );
+      // Tìm 2 columns theo cardId
+      const activeColumn = findColumnByCardId(activeDraggingCardId);
+      const overColumn = findColumnByCardId(overCardId);
 
-      // arrayMove dùng để sắp xếp lại mảng Columns ban đầu
-      const dndOrderedColumns = arrayMove(orderedColumns, oldIndex, newIndex);
-      // const dndOrderedColumnIds = dndOrderedColumns.map((column) => column._id);
+      if (!activeColumn || !overColumn) return;
 
-      setOrderedColumns(dndOrderedColumns);
+      if (activeColumn._id !== oldColumnDraggingCard._id) {
+        // Kéo thả card giữa 2 column khác nhau
+        console.log('Kéo thả card giữa 2 column khác nhau');
+      } else {
+        // Kéo thả card trong cùng 1 column
+        const oldCardIndex = oldColumnDraggingCard?.cards?.findIndex(
+          (card) => card._id === activeDragItemId,
+        );
+
+        const newCardIndex = overColumn?.cards?.findIndex(
+          (card) => card._id === overCardId,
+        );
+
+        const dndOrderedCards = arrayMove(
+          oldColumnDraggingCard?.cards,
+          oldCardIndex,
+          newCardIndex,
+        );
+
+        setOrderedColumns((prevColumns) => {
+          const nextColumns = cloneDeep(prevColumns);
+
+          const targetColumn = nextColumns.find(
+            (column) => column._id === overColumn._id,
+          );
+
+          targetColumn.cards = dndOrderedCards;
+          targetColumn.cardOrderIds = dndOrderedCards.map((card) => card._id);
+
+          return nextColumns;
+        });
+      }
     }
 
+    // Xử lý kéo thả Column
+    if (activeDragItemType === ACTIVE_DRAG_ITEM_TYPE.COLUMN) {
+      if (active.id !== over.id) {
+        const oldColumnIndex = orderedColumns.findIndex(
+          (column) => column._id === active.id,
+        );
+
+        const newColumnIndex = orderedColumns.findIndex(
+          (column) => column._id === over.id,
+        );
+
+        // arrayMove dùng để sắp xếp lại mảng Columns ban đầu
+        const dndOrderedColumns = arrayMove(
+          orderedColumns,
+          oldColumnIndex,
+          newColumnIndex,
+        );
+        // const dndOrderedColumnIds = dndOrderedColumns.map((column) => column._id);
+
+        setOrderedColumns(dndOrderedColumns);
+      }
+    }
+
+    // Những dữ liệu sau khi kéo thả luôn phải đưa về giá trị null mặc định ban đầu
     setActiveDragItemId(null);
     setActiveDragItemType(null);
     setActiveDragItemData(null);
+    setOldColumnDraggingCard(null);
   };
 
   // Animation khi thả (drop) phần tử - Test bằng cahs kéo xong thả trực tiếp và nhìn phần giữ chỗ overlay
